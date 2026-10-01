@@ -60,24 +60,24 @@ BongoCat 使用 CMake，需要 C11 编译器、C++17 编译器、CMake 3.24 或�
 
 ### 🔧 配置与构建
 
-在 Linux 和 macOS 上，请使用 Ninja 这样的单配置生成器：
+- **在 Linux 和 macOS 上**，请使用类似 Ninja 这样的单配置生成器：
 
-```bash
-cmake -S . -B build -G Ninja \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DBONGO_CAT_FETCH_DEPS=ON
-cmake --build build --parallel
-```
+  ```bash
+  cmake -S . -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBONGO_CAT_FETCH_DEPS=ON
+  cmake --build build --parallel
+  ```
 
-在 Windows 上，请从 Visual Studio 2022 开发者命令行（或 MSVC 可用的其他命令行）运行：
+- **在 Windows 上**，请从 Visual Studio 2022 开发者命令行（或 MSVC 可用的其他命令行）运行：
 
-```powershell
-cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
-  -DBONGO_CAT_FETCH_DEPS=ON
-cmake --build build --config Release --parallel
-```
-
-可执行文件位于：Linux 的 `build/BongoCat`，macOS 的 `build/BongoCat.app/Contents/MacOS/BongoCat`，Visual Studio 构建的 Windows 版本为 `build/Release/BongoCat.exe`。
+  ```powershell
+  cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
+    -DBONGO_CAT_FETCH_DEPS=ON
+  cmake --build build --config Release --parallel
+  ```
+> [!TIP]
+> 可执行文件位于：Linux 的 `build/BongoCat`，macOS 的 `build/BongoCat.app/Contents/MacOS/BongoCat`，Visual Studio 构建的 Windows 版本为 `build/Release/BongoCat.exe`。
 
 ### 🧪 测试
 
@@ -226,7 +226,7 @@ flowchart TB
 
 ### 🔒 BongoCat 会记录我的键盘或鼠标输入吗？
 
-不会。BongoCat 在本地处理键盘和鼠标输入，用于驱动动画和快捷键。它不会记录或上传按键、鼠标操作或其他交互数据。配置也只保存在本地，应用不包含广告、分析工具或用户跟踪代码。执行更新检查时只会请求公开的版本元数据，不会发送输入、配置或使用数据。
+不会。BongoCat 仅在本地即时处理键盘和鼠标输入，用于渲染动画和触发快捷键。它不会记录或上传按键、鼠标操作或其他交互数据。配置也只保存在本地。BongoCat 不包含广告、分析工具或用户跟踪代码。执行更新检查时只会请求公开的版本元数据，不会发送输入、配置或使用数据。
 
 ### Linux Wayland 输入
 
