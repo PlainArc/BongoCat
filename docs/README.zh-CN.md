@@ -76,8 +76,12 @@ BongoCat 使用 CMake，需要 C11 编译器、C++17 编译器、CMake 3.24 或�
     -DBONGO_CAT_FETCH_DEPS=ON
   cmake --build build --config Release --parallel
   ```
-> [!TIP]
-> 可执行文件位于：Linux 的 `build/BongoCat`，macOS 的 `build/BongoCat.app/Contents/MacOS/BongoCat`，Visual Studio 构建的 Windows 版本为 `build/Release/BongoCat.exe`。
+> [!NOTE]
+> 可执行文件位置：
+>
+> - Linux：`build/BongoCat`
+> - macOS：`build/BongoCat.app/Contents/MacOS/BongoCat`
+> - Windows（Visual Studio 构建）：`build/Release/BongoCat.exe`
 
 ### 🧪 测试
 
