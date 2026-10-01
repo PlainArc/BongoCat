@@ -148,24 +148,23 @@ BongoCat 源代码和本地运行时采用 [AGPL-3.0-only](../LICENSE) 许可证
 
 当前原生版本基于 C/C++、SDL3 和 OpenGL 构建。下图重点展示运行时数据流；构建与打包细节请参阅 CMake 文件。
 
-### 🔄 运行时所有权与帧调度
+### 运行时所有权与帧调度
 
 每个进程拥有一个 `BongoCatApp` 和一个主线程事件/渲染循环。平台监听器在输入边界处停止：
 
-```text
-平台监听器（键盘/指针）
-            |
-            v
-  C11 输入状态（原子边沿队列 + 合并后的指针位置）
-            |
-            v
-  主线程应用 <----- SDL3 事件
-            |
-            v
-  模型参数、覆盖层和 UI 状态
-            |
-            v
-  模型更新 -> OpenGL 合成 -> 平台呈现
+```mermaid
+flowchart TB
+    Listener["平台监听器（键盘/指针）"] --> InputState["C11 输入状态（原子边沿队列 + 合并后的指针位置）"]
+    InputState --> MainThread["主线程应用"]
+    SDLEvent["SDL3 事件"] --> MainThread
+    MainThread --> ModelState["模型参数、覆盖层和 UI 状态"]
+
+    subgraph Render["渲染阶段"]
+        direction LR
+        ModelUpdate["模型更新"] --> Compose["OpenGL 合成"] --> Present["平台呈现"]
+    end
+
+    ModelState --> Render
 ```
 
 Windows Raw Input 接收器、macOS Quartz 事件 tap 和 Linux XInput2 监听器运行在主循环之外。按键和鼠标按钮边沿进入有界原子队列，移动量单独合并，并通过 SDL 事件唤醒主线程，避免高频移动挤出按键事件。Windows 使用独立消息窗口，以 `RIDEV_INPUTSINK | RIDEV_DEVNOTIFY` 订阅后台键鼠输入并保留普通窗口消息；其他程序隐藏或锁定光标时，模型使用设备上报的移动量，桌面跟随则读取 SDL 提供的系统光标位置。接收器分别管理各设备的按下状态，在设备拔出或输入桌面切换时清理。Windows 不再安装输入钩子或使用 DirectInput，也不向游戏发送输入。SDL3 窗口、偏好设置和手柄事件仍在主线程处理，平台监听器不会直接调用 Live2D、覆盖层或 UI 代码。
@@ -252,10 +251,10 @@ BONGOCAT_ENABLE_EVDEV=1 ./build/BongoCat
 
 ### 为什么使用 OpenGL 而不是 Vulkan？
 
-这不是因为 Vulkan 不好，而是 BongoCat 不需要那种程度的复杂性。应用主要渲染一个 Live2D 模型、少量 UI 图层和透明桌面窗口，OpenGL 已能轻松满足需求，并且能自然地与 SDL3 及 Cubism 的 OpenGL 渲染器配合。迁移到 Vulkan 将需要在三个桌面平台维护更多渲染和同步代码，却不会为用户带来明显提升。对于 BongoCat 当前的工作负载，OpenGL 让渲染器更精简、更易调试和维护，同时仍能提供所需性能。
+不是因为 Vulkan 不好，而是 BongoCat 不需要那种程度的复杂性。应用主要渲染一个 Live2D 模型、少量 UI 图层和透明桌面窗口，OpenGL 已能轻松满足，并且能自然地与 SDL3 及 Cubism 的 OpenGL 渲染器配合。迁移到 Vulkan 将需要在三个桌面平台维护更多渲染和同步代码，却不会为用户带来明显提升。对于 BongoCat 当前的工作负载，OpenGL 让渲染器更精简、更易调试和维护，同时仍能提供所需性能。
 
 ## 🙏 特别感谢
-> [!TIP]
+> [!NOTE] 
 > BongoCat 的每一步都得益于开源精神。我们衷心感谢所有社区贡献者的无私奉献（按贡献日期先后排序列于下方）。正是你们的支持，让桌面陪伴更加自由与真诚。❤️‍🔥
 
 
